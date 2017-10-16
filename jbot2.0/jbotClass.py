@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
+
 class musicSync:
 
     def __init__(self, relayPins, otherPins, fadePins):
@@ -23,13 +24,13 @@ class musicSync:
         for i in self.relayPins:
             GPIO.output(i, GPIO.HIGH)
 
-    def cycleRelayOnWorker(self, preSleep = 0):
+    def cycleRelayOnWorker(self, preSleep=0):
         time.sleep(preSleep)
         for i in self.relayPins:
             GPIO.output(i, GPIO.LOW)
             time.sleep(.79)
 
-    def cycleRelayOffWorker(self, preSleep = 0):
+    def cycleRelayOffWorker(self, preSleep=0):
         time.sleep(preSleep)
         for i in self.relayPins:
             GPIO.output(i, GPIO.HIGH)
@@ -37,12 +38,13 @@ class musicSync:
 
     def fade1Worker(self):
         PIN = GPIO.PWM(self.fadePins[0], self.freq)
+
         def beatDuration(sleep):
-            for x in range(1,100):
+            for x in range(1, 100):
                 PIN.ChangeDutyCycle(101-x)
                 time.sleep(sleep)
         PIN.start(0)
-        #for i in range(0, 6):
+        # for i in range(0, 6):
         #    print(i)
         beatDuration(.011)
         beatDuration(.004)
@@ -55,7 +57,7 @@ class musicSync:
         beatDuration(.007)
         beatDuration(.004)
         beatDuration(.005)
-        #print("here")
+        # print("here")
         beatDuration(.004)
         beatDuration(.007)
         beatDuration(.004)
@@ -68,7 +70,7 @@ class musicSync:
         beatDuration(.007)
         beatDuration(.004)
         beatDuration(.005)
-        #print('here')
+        # print('here')
         beatDuration(.005)
         beatDuration(.007)
         beatDuration(.004)
@@ -81,7 +83,7 @@ class musicSync:
         beatDuration(.007)
         beatDuration(.004)
         beatDuration(.005)
-        #print('here')
+        # print('here')
         beatDuration(.005)
         beatDuration(.007)
         beatDuration(.004)
@@ -94,7 +96,7 @@ class musicSync:
         beatDuration(.007)
         beatDuration(.004)
         beatDuration(.005)
-        #print('here')
+        # print('here')
         beatDuration(.005)
         beatDuration(.007)
         beatDuration(.004)
@@ -108,18 +110,18 @@ class musicSync:
         beatDuration(.004)
         beatDuration(.005)
 
-    def shortThreadWorker(self, stat = False):
+    def shortThreadWorker(self, stat=False):
         if stat:
             GPIO.output(self.otherPins[1], GPIO.LOW)
         else:
             GPIO.output(self.otherPins[1], GPIO.HIGH)
 
-    def fastRelayCycleOn(self, sleep = .195):
+    def fastRelayCycleOn(self, sleep=.195):
         for i in self.relayPins:
             GPIO.output(i, GPIO.LOW)
             time.sleep(sleep)
 
-    def fastRelayCycleOff(self, sleep = .195):
+    def fastRelayCycleOff(self, sleep=.195):
         for i in self.relayPins:
             GPIO.output(i, GPIO.HIGH)
             time.sleep(sleep)
@@ -142,12 +144,11 @@ class musicSync:
             GPIO.output(self.fadePins[1], GPIO.HIGH)
             time.sleep(stime)
 
-
-
     def beat(self):
         BLUE = GPIO.PWM(self.otherPins[2], self.freq)
+
         def beatDuration(sleep):
-            for x in range(1,100):
+            for x in range(1, 100):
                 BLUE.ChangeDutyCycle(101-x)
                 time.sleep(sleep)
         BLUE.start(100)
