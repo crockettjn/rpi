@@ -10,7 +10,7 @@ freq = 100
 relay = [5, 6, 13, 19, 26, 16, 20, 21]
 for i in relay:
     GPIO.setup(i, GPIO.OUT)
-other = [23, 24, 25]
+other = [23, 24, 25, 18, 12]
 for i in other:
     GPIO.setup(i, GPIO.OUT)
 
