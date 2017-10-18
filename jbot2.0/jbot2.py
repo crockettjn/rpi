@@ -19,7 +19,7 @@ def firstSection(songObj):
 
 def secondSection(songObj):
     print('SecondSection')
-    pygame.mixer.music.set_pos(21.083037)
+    #pygame.mixer.music.set_pos(21.083037)
     # pygame.mixer.music.set_pos(21)
     _thread.start_new_thread(songObj.fade1Worker, (4, ))
     count = 1
@@ -48,7 +48,8 @@ def secondSection(songObj):
 
 def thirdSection(songObj):
     print('ThirdSection')
-    pygame.mixer.music.set_pos(59)
+    time.sleep(.3)
+    #pygame.mixer.music.set_pos(59)
     _thread.start_new_thread(songObj.beat, ())
     for i in range(1, 13):
         if i % 2 != 0:
@@ -69,7 +70,8 @@ def thirdSection(songObj):
 
 def fourthSection(songObj):
     print('FourthSection')
-    pygame.mixer.music.set_pos(96.71)
+    time.sleep(.2)
+    #pygame.mixer.music.set_pos(96.71)
     # pygame.mixer.music.set_pos(109.71)
     _thread.start_new_thread(songObj.fade1Worker, (9, ))
     time.sleep(12.2)
@@ -114,7 +116,7 @@ def fourthSection(songObj):
     time.sleep(1)
     _thread.start_new_thread(songObj.fastBeat, (.008, ))
     time.sleep(.9)
-    _thread.start_new_thread(songObj.fastBeat, (.003, )) #7
+    _thread.start_new_thread(songObj.fastBeat, (.003, ))
     time.sleep(.31)
     _thread.start_new_thread(songObj.fastBeat, (.002, ))
     time.sleep(.22)
@@ -125,20 +127,46 @@ def fourthSection(songObj):
     _thread.start_new_thread(songObj.fastBeat, (.002, ))
     time.sleep(.22)
     _thread.start_new_thread(songObj.fastBeat, (.002, ))
+    print(time.time())
 
 
-
-    time.sleep(600)
+    #time.sleep(600)
 
 def fithSection(songObj):
+    print(time.time())
     print('FithSection')
-    #pygame.mixer.music.set_pos(146.73)
+    #pygame.mixer.music.set_pos(159.539)
+    pygame.mixer.music.set_pos(165.5)
+    _thread.start_new_thread(songObj.beat, ())
+    for i in range(1, 13):
+        if i % 2 != 0:
+            _thread.start_new_thread(songObj.longSpanWorker, ())
+        print(i)
+        if i >= 5 and i < 9:
+            _thread.start_new_thread(songObj.s3short, ())
+        if i >= 9:
+            _thread.start_new_thread(songObj.dualCycle, ())
+        songObj.fastRelayCycleOn()
+        songObj.fastRelayCycleOff()
+        if i >= 1 and i < 13:
+            if i % 2 != 0:
+                _thread.start_new_thread(songObj.shortThreadWorker, ())
+            else:
+                _thread.start_new_thread(songObj.shortThreadWorker, (True, ))
+        if i == 8:
+            print(time.time())
+            _thread.start_new_thread(songObj.triWorker, ())
+
+
+    time.sleep(60)
+
 
 def main():
     # Define GPIO pins for LED control
     relayPins = [5, 6, 13, 19, 26, 16, 20, 21]
     otherPins = [23, 24, 25]
     fadePins = [18, 12]
+    triPins = [17, 27, 22]
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     # Set up GPIO LED control pins as output
@@ -146,9 +174,11 @@ def main():
         GPIO.setup(i, GPIO.OUT)
     for i in otherPins:
         GPIO.setup(i, GPIO.OUT)
+    for i in triPins:
+        GPIO.setup(i, GPIO.OUT)
     for i in fadePins:
         GPIO.setup(i, GPIO.OUT)
-    song = musicSync(relayPins, otherPins, fadePins)
+    song = musicSync(relayPins, otherPins, fadePins, triPins)
     song.allRelayOff()
     song.allOtherOff()
 
@@ -160,7 +190,7 @@ def main():
     #firstSection(song)
     #secondSection(song)
     #thirdSection(song)
-    fourthSection(song)
+    #fourthSection(song)
     fithSection(song)
 
     print(time.time())

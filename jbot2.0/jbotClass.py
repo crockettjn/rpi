@@ -4,10 +4,11 @@ import time
 
 class musicSync:
 
-    def __init__(self, relayPins, otherPins, fadePins):
+    def __init__(self, relayPins, otherPins, fadePins, tri):
         self.relayPins = relayPins
         self.otherPins = otherPins
         self.fadePins = fadePins
+        self.triPins = tri
         self.freq = 100
         self.toggle = 'LOW'
 
@@ -19,10 +20,44 @@ class musicSync:
             GPIO.output(pin, GPIO.LOW)
             self.toggle = 'LOW'
 
+    def triWorker(self):
+        time.sleep(.6)
+        GPIO.output(self.triPins[0], GPIO.HIGH)
+        time.sleep(.36)
+        GPIO.output(self.triPins[0], GPIO.LOW)
+        time.sleep(.36)
+        GPIO.output(self.triPins[1], GPIO.HIGH)
+        time.sleep(2.4)
+
+        GPIO.output(self.triPins[1], GPIO.LOW)
+        time.sleep(.46)
+        GPIO.output(self.triPins[2], GPIO.HIGH)
+        time.sleep(.38)
+        GPIO.output(self.triPins[2], GPIO.LOW)
+        time.sleep(2.29)
+
+        GPIO.output(self.triPins[0], GPIO.HIGH)
+        time.sleep(.48)
+        GPIO.output(self.triPins[0], GPIO.LOW)
+        time.sleep(.39)
+        GPIO.output(self.triPins[1], GPIO.HIGH)
+        time.sleep(2.30)
+        
+        GPIO.output(self.triPins[1], GPIO.LOW)
+        time.sleep(.44)
+        GPIO.output(self.triPins[2], GPIO.HIGH)
+        time.sleep(.33)
+        GPIO.output(self.triPins[2], GPIO.LOW)
+        time.sleep(.36)
+        #GPIO.output(self.triPins[0], GPIO.HIGH)
+
+
     def allOtherOff(self):
         for i in self.otherPins:
             GPIO.output(i, GPIO.LOW)
         for i in self.fadePins:
+            GPIO.output(i, GPIO.LOW)
+        for i in self.triPins:
             GPIO.output(i, GPIO.LOW)
 
     def allOtherOn(self):
