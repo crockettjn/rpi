@@ -9,15 +9,15 @@ class musicSync:
         self.otherPins = otherPins
         self.fadePins = fadePins
         self.freq = 100
-        self.tog = 'LOW'
+        self.toggle = 'LOW'
 
-    def toggle(self):
-        if self.tog == 'LOW':
-            GPIO.output(self.fadePins[1], GPIO.HIGH)
-            self.tog = 'HIGH'
+    def togglePin(self, pin):
+        if self.toggle == 'LOW':
+            GPIO.output(pin, GPIO.HIGH)
+            self.toggle = 'HIGH'
         else:
-            GPIO.output(self.fadePins[1], GPIO.LOW)
-            self.tog = 'LOW'
+            GPIO.output(pin, GPIO.LOW)
+            self.toggle = 'LOW'
 
     def allOtherOff(self):
         for i in self.otherPins:
@@ -77,26 +77,40 @@ class musicSync:
             time.sleep(.79)
 
     def otherFadeWorker(self):
-        PIN1 = GPIO.PWM(self.otherPins[0], self.freq)
-        PIN2 = GPIO.PWM(self.otherPins[1], self.freq)
-        PIN3 = GPIO.PWM(self.otherPins[2], self.freq)
-        PIN1.start(0)
-        PIN2.start(0)
-        PIN3.start(0)
+        blue = GPIO.PWM(self.otherPins[0], self.freq)
+        red = GPIO.PWM(self.otherPins[1], self.freq)
+        yellow = GPIO.PWM(self.otherPins[2], self.freq)
+        blue.start(0)
+        red.start(0)
+        yellow.start(0)
         for x in range(1, 100):
-            PIN1.ChangeDutyCycle(101-x)
-            PIN2.ChangeDutyCycle(101-x)
-            PIN3.ChangeDutyCycle(101-x)
+            blue.ChangeDutyCycle(101-x)
+            red.ChangeDutyCycle(101-x)
+            yellow.ChangeDutyCycle(101-x)
             time.sleep(.02)
 
+    def fastBeat(self, sleep):
+        blue = GPIO.PWM(self.otherPins[0], self.freq)
+        red = GPIO.PWM(self.otherPins[1], self.freq)
+        yellow = GPIO.PWM(self.otherPins[2], self.freq)
+        blue.start(0)
+        red.start(0)
+        yellow.start(0)
+        for x in range(1, 100):
+            blue.ChangeDutyCycle(101-x)
+            red.ChangeDutyCycle(101-x)
+            yellow.ChangeDutyCycle(101-x)
+            time.sleep(sleep)
+
+
     def fade1Worker(self, repeat):
-        PIN = GPIO.PWM(self.fadePins[0], self.freq)
+        green = GPIO.PWM(self.fadePins[0], self.freq)
 
         def beatDuration(sleep):
             for x in range(1, 100):
-                PIN.ChangeDutyCycle(101-x)
+                green.ChangeDutyCycle(101-x)
                 time.sleep(sleep)
-        PIN.start(0)
+        green.start(0)
         # for i in range(0, 6):
         #    print(i)
         beatDuration(.011)
@@ -197,3 +211,47 @@ class musicSync:
         for x in range(1, 100):
             YELLOW.ChangeDutyCycle(101-x)
             time.sleep(0.06)
+
+    def singleFade(self, pin, sleep, top):
+        white = GPIO.PWM(self.fadePins[1], self.freq)
+        green = GPIO.PWM(self.fadePins[0], self.freq)
+        blue = GPIO.PWM(self.otherPins[2], self.freq)
+        red = GPIO.PWM(self.otherPins[1], self.freq)
+        yellow = GPIO.PWM(self.otherPins[0], self.freq)
+        top1 = top + 1
+        if pin == 'white':
+            white.start(top)
+        elif pin == 'green':
+            green.start(top)
+        elif pin == 'blue':
+            blue.start(top)
+        elif pin == 'red':
+            red.start(top)
+        elif pin == 'yellow':
+            yellow.start(top)
+        for x in range(1, top):
+            if pin == 'white':
+                white.ChangeDutyCycle(top1-x)
+            if pin == 'green':
+                green.ChangeDutyCycle(top1-x)
+            if pin == 'blue':
+                blue.ChangeDutyCycle(top1-x)
+            if pin == 'red':
+                red.ChangeDutyCycle(top1-x)
+            if pin == 'yellow':
+                yellow.ChangeDutyCycle(top1-x)
+            time.sleep(sleep)
+
+    def multiFade(self, sleep, top):
+        blue = GPIO.PWM(self.otherPins[2], self.freq)
+        red = GPIO.PWM(self.otherPins[1], self.freq)
+        yellow = GPIO.PWM(self.otherPins[0], self.freq)
+        top1 = top + 1
+        blue.start(top)
+        red.start(top)
+        yellow.start(top)
+        for x in range(1, top):
+            blue.ChangeDutyCycle(top1-x)
+            red.ChangeDutyCycle(top1-x)
+            yellow.ChangeDutyCycle(top1-x)
+            time.sleep(sleep)
