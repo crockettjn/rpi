@@ -1,3 +1,13 @@
+#############################################################
+# This is my first stab at creating a python script to
+# sync lights to music.  As such, my methods of doing this
+# changed and improved throughout the process.  So, it's
+# somewhat inconsistent and a bit of a mess.  But hey, it works
+# and i'm not willing to rewrite it to make the code better
+# because it works.  The code for the next song will be much
+# cleaner.  I'm not sure why programmers always have to
+# justify their crappy code; I guess i'm no exception.
+#############################################################
 import time
 import pygame
 import RPi.GPIO as GPIO
@@ -5,7 +15,9 @@ import _thread
 from jbotClass import musicSync
 
 
-def firstSection(songObj):
+def firstSection(songObj, button=False):
+    if button:
+        pygame.mixer.music.play()
     time.sleep(3.8)
     GPIO.output(songObj.otherPins[0], GPIO.HIGH)
     _thread.start_new_thread(songObj.cycleRelayOnWorker, (.79, ))
@@ -15,12 +27,14 @@ def firstSection(songObj):
     time.sleep(6.3371)
     GPIO.output(songObj.otherPins[2], GPIO.HIGH)
     time.sleep(4.5)
+    if button:
+        pygame.mixer.music.stop()
 
 
-def secondSection(songObj):
+def secondSection(songObj, button=False):
     print('SecondSection')
-    #pygame.mixer.music.set_pos(21.083037)
-    # pygame.mixer.music.set_pos(21)
+    if button:
+        pygame.mixer.music.play(start=21)
     _thread.start_new_thread(songObj.fade1Worker, (4, ))
     count = 1
     for i in range(0, 5):
@@ -44,6 +58,8 @@ def secondSection(songObj):
     songObj.allRelayOff()
     songObj.allOtherOff()
     time.sleep(7)
+    if button:
+        pygame.mixer.music.stop()
 
 
 def thirdSection(songObj):
@@ -156,9 +172,16 @@ def fithSection(songObj):
         if i == 8:
             print(time.time())
             _thread.start_new_thread(songObj.triWorker, ())
-
-
     time.sleep(60)
+
+
+def PlayAll(songObj):
+    pygame.mixer.music.play()
+    #firstSection(songObj)
+    #secondSection(songObj)
+    #thirdSection(songObj)
+    #fourthSection(songObj)
+    fithSection(songObj)
 
 
 def main():
@@ -167,6 +190,7 @@ def main():
     otherPins = [23, 24, 25]
     fadePins = [18, 12]
     triPins = [17, 27, 22]
+    buttonPins = [14, 15]
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     # Set up GPIO LED control pins as output
@@ -184,16 +208,27 @@ def main():
 
     pygame.mixer.init()
     pygame.mixer.music.load('mp3/jbot2.mp3')
-    pygame.mixer.music.play()
-    print(time.time())
+    print("here1")
+    for i in buttonPins:
+        GPIO.setup(i, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.add_event_detect(buttonPins[0], GPIO.BOTH,
+                          callback=firstSection(song, True),
+                          bouncetime=800)
+    GPIO.add_event_detect(buttonPins[1], GPIO.BOTH,
+                          callback=secondSection(song, True),
+                          bouncetime=800)
+    #GPIO.add_event_detect(buttonPins[5], GPIO.BOTH,
+    #                      callback=PlayAll(song),
+    #                      bouncetime=800)
+    print('here2')
+    while True:
+        print("Waiting for button")
 
     #firstSection(song)
     #secondSection(song)
     #thirdSection(song)
     #fourthSection(song)
-    fithSection(song)
-
-    print(time.time())
+    #fithSection(song)
 
 
 if __name__ == "__main__":
